@@ -14,35 +14,55 @@ const fetchCountryData = (country) => {
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
-            printCountry(data);
+            countriesData = [...countriesData, ...data];
+            printCountry(countriesData);
         })
 }
 
 
 // fonction pour afficher les pays
 const printCountry = (countriesData) => {
-
-    countriesData.forEach(country => {
+    container.innerHTML = ''; // Efface tout contenu précédent
+    countriesData.forEach((country, index) => {
         const countryElement = document.createElement("div");
-        countryElement.classList = 'country-card';
-        countryElement.innerHTML = `<p>${country.name.common}</p><p>${country.flag}</p>`
-        container.appendChild(countryElement);
+        countryElement.className = 'country-card';
 
-        // Gestion de la liste via un crud
-        countriesData.push(countryElement);
+        // Crée et ajoute les éléments de texte
+        const nameElement = document.createElement("p");
+        nameElement.textContent = country.name.common;
+        const flagElement = document.createElement("p");
+        flagElement.textContent = country.flag;
+
+        // Crée et configure le bouton de suppression
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Supprimer";
+        deleteButton.addEventListener("click", () => deleteCountry(index));
+
+        // Ajoute les éléments au div de la carte pays
+        countryElement.appendChild(nameElement);
+        countryElement.appendChild(flagElement);
+        countryElement.appendChild(deleteButton);
+
+        // Ajoute la carte pays au conteneur principal
+        container.appendChild(countryElement);
     })
 }
 
-// Gestionnaire d'événements pour le bouton
+
+// Gestionnaire d'événements pour le bouton d'ajout de pays
 btn.addEventListener("click", () => {
     const countryName = input.value.trim();
-
     if(countryName) {
         fetchCountryData(countryName)
     }
 });
 
+// Gestionnaire d'événements pour le bouton suppression de pays
+const deleteCountry = (index) => {
+    console.log(index)
+    countriesData.splice(index, 1);
+    printCountry(countriesData);
+}
 
 // Gestionnaire d'événements pour la touche Entrée
 input.addEventListener("keydown", (event) => {
